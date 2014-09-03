@@ -1,0 +1,26 @@
+My experience with Beagleboard
+Use the latest debian version from official site.
+For ubuntu most of the libraies(like gcc) are not available.
+
+Set up proxy or use curl for internet connection in bb.
+(/etc/network/interfaces).
+
+First test Led test 
+This was use to see how much real is the hardware.
+Use your own c++ code as for default terminal delay codes are not working properly.
+
+After about 24 hrs of failures  I found something like this 
+muxes are not available after linux kernel 3.7. Most of the man-pages are old
+something called device tree is now rather than hardcoding it in hardware
+
+http://derekmolloy.ie/beaglebone/beaglebone-gpio-programming-on-arm-embedded-linux/
+http://elinux.org/BeagleBone_and_the_3.8_Kernel
+The dts are source file and dtb are binary .
+see the files @/lib/firmware
+find the pwm pin ou want to configure
+than echo file(--) > /sys/devices/bone_capemgr.8/slots
+first echo am33xx_pwm to start the pwm than the pwm file you want to configure
+
+To operate pwm use the echo command in /sys/devices/ocp.3/pwm_test....
+http://digital-drive.com/?p=146
+
