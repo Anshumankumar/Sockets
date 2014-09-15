@@ -1,6 +1,11 @@
 #ifndef SOCKET_CLIENT_H
 #define SOCKET_CLIENT_H
 
+
+#define MYIP "192.168.3.5"
+#define BBIP "192.168.3.4"
+#define PORTNO "4450"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -19,7 +24,10 @@ using namespace std;
 struct port 
 {
 	int portno;
+	int identifier;
 };
+
+
 
 class Socket
 {	
@@ -36,12 +44,23 @@ class Socket
 	Socket(char*, char*,int);
 	int initialize();
 	int send_dgram(port);
-	int send();
-	int receive();
+	int send_stream(char *,int);
+	int receive_stream(char *,int);
 	int get_port();
 	int accept_client();
 };
 
-int setSock();
+
+class childProcess
+{
+	 Socket sensorData;
+         port newPort;
+	 public:
+	 childProcess();
+	void send (char *,int);
+	 void receive(char *,int);	
+};
+
+void getEnvVar();
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef SOCKET_SERVER_CPP
 #define SOCKET_SERVER_CPP
 #include "socket_server.h"
-
+#include <stdio.h>
 Socket::Socket (char* port,char* address,int socktype)
 {
 	memset(&hints,0,sizeof(hints));
@@ -64,6 +64,7 @@ int Socket::initialize()
 		}
 
 		freeaddrinfo(servinfo);
+		return 0;
 	}
 
 
@@ -91,7 +92,7 @@ int Socket::initialize()
 		}
 
 		printf("client: connecting to %s \n",portno);
- 
+
 
 
 	}
@@ -99,14 +100,23 @@ int Socket::initialize()
 }
 int Socket::receive_dgram(port &new_port )
 {
+	 printf("Wating for clients \n");
+
 	int numbytes;
 	len = sizeof (their_addr);
-        if ((numbytes = recvfrom(sockfd, &new_port, sizeof(new_port) , 0,
-                                        (struct sockaddr *)&their_addr, &len)) == -1) {
-                perror("recvfrom");
-                exit(1);
-        }
+	if ((numbytes = recvfrom(sockfd, &new_port, sizeof(new_port) , 0,
+					(struct sockaddr *)&their_addr, &len)) == -1) {
+		perror("recvfrom");
+		exit(1);
+	}
 
 }
+
+ int Socket::receive(void * data,int len)
+{
+         int flag;
+         flag=read(sockfd,(char *)data,len);
+}
+
 
 #endif

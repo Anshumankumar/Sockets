@@ -28,6 +28,7 @@ enum datatype
 struct port
 {
         int portno;
+	int identifier;
 };
 
 class Socket
@@ -49,7 +50,7 @@ class Socket
         int initialize();
         int receive_dgram(port&);
         int send();
-        int receive();
+        int receive(void *,int);
         int get_port();
         int accept_client();
 };
