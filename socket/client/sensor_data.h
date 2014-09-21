@@ -13,4 +13,13 @@ struct ImuData
 	int16_t yawRate;
 };
 
+struct DvlData
+{
+	int16_t positionX;
+	int16_t positionY;
+	int16_t positionZ;
+	int16_t velocityX;
+	int16_t velocityY;
+	int16_t velocityZ;
+};
 #endif

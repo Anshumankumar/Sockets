@@ -1,0 +1,8 @@
+#ifndef CHILD_PROCESS_H
+#define CHILD_PROCESS_H
+
+enum processIdentifier
+{
+	SENSOR_DATA,PRESSURE_DATA,PWM_DATA,DEBUG_SEND,DEBUG_RECEIVE,SET_POINT
+};
+#endif

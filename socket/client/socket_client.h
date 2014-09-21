@@ -53,12 +53,12 @@ class Socket
 
 class childProcess
 {
-	 Socket sensorData;
-         port newPort;
-	 public:
-	 childProcess();
+	Socket sensorData;
+	port newPort;
+	public:
+	childProcess();
 	void send (char *,int);
-	 void receive(char *,int);	
+	void receive(char *,int);	
 };
 
 void getEnvVar();

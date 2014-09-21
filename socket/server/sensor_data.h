@@ -5,12 +5,28 @@
 
 struct ImuData
 {
-	int16_t roll;
-	int16_t pitch;
-	int16_t yaw;	
-	int16_t rollRate;
-	int16_t pitchRate;
-	int16_t yawRate;
+	double orientationX;
+	double orientationY;
+	double orientationZ;
+	double orientationW;	
+	double rollRate;
+	double pitchRate;
+	double yawRate;
 };
 
+struct DvlData
+{
+	double positionX;
+	double positionY;
+	double positionZ;
+	double velocityX;
+	double velocityY;
+	double velocityZ;
+};
+
+struct sensorData
+{
+	struct ImuData imuData;
+	struct DvlData dvlData;
+};
 #endif
