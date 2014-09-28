@@ -20,7 +20,11 @@ Socket::Socket()
 	hints.ai_socktype=SOCK_STREAM;
 }
 
-
+Socket::~Socket()
+{
+	printf("Closing the Socket\n");
+	close(sockfd);
+}
 void Socket::setPort (char* port, char* address)
 {
 	ipaddress=address;
@@ -100,7 +104,7 @@ int Socket::initialize()
 }
 int Socket::receive_dgram(port &new_port )
 {
-	 printf("Wating for clients \n");
+	printf("Wating for clients \n");
 
 	int numbytes;
 	len = sizeof (their_addr);
@@ -112,11 +116,18 @@ int Socket::receive_dgram(port &new_port )
 
 }
 
- int Socket::receive(void * data,int len)
+int Socket::receive(void * data,int len)
 {
-         int flag;
-         flag=read(sockfd,(char *)data,len);
+	int flag;
+	flag=read(sockfd,(char *)data,len);
+	return flag;
 }
 
+int Socket::send(void * data,int len)
+{
+	int flag;
+	flag=write(sockfd,(char *)data,len);
+	return flag;
+}
 
 #endif

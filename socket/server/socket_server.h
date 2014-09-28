@@ -23,36 +23,37 @@ enum datatype
 	IMU_DATA=1,
 	PRESSURE_SENSOR=2,
 	PNEUMATICS_DATA=3,
-	
+
 };
 struct port
 {
-        int portno;
+	int portno;
 	int identifier;
 };
 
 class Socket
 {
-        int sockfd;
-        char* portno;
-        int rv;
-        const char* ipaddress;
-        struct addrinfo hints,*servinfo,*p;
-        struct sockaddr_in *sin;
+	int sockfd;
+	char* portno;
+	int rv;
+	const char* ipaddress;
+	struct addrinfo hints,*servinfo,*p;
+	struct sockaddr_in *sin;
 	datatype receivedData;
-        socklen_t len;
-        struct port new_port;
-        struct sockaddr_storage their_addr;
-        public:
+	socklen_t len;
+	struct port new_port;
+	struct sockaddr_storage their_addr;
+	public:
 	Socket();
-        Socket(char*, char*,int);
+	Socket(char*, char*,int);
+	~Socket();
 	void setPort(char*,char*);
-        int initialize();
-        int receive_dgram(port&);
-        int send();
-        int receive(void *,int);
-        int get_port();
-        int accept_client();
+	int initialize();
+	int receive_dgram(port&);
+	int send(void *,int);
+	int receive(void *,int);
+	int get_port();
+	int accept_client();
 };
 
 #endif
