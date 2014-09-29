@@ -1,13 +1,10 @@
 #include <iostream>
-#include "socket_server.h"
+
+
 #include "childProcess.h"
-//#include "struct/sensor_data.h"
-//#include "struct/setPointData.h"
-//#include "struct/pressureData.h"
-#include "struct/debugData.h"
-//#include "struct/pwmData.h"
-//#include "struct/database.h"
 #include "controller/controller.h"
+#include "socket_server.h"
+#include "struct/debugData.h"
 
 #define MAX_THREAD 10
 
@@ -21,6 +18,7 @@ Socket child[MAX_THREAD];
 struct SensorData sensorData;
 struct PressureData pressureData;
 struct SetPoint setPoint;
+struct PwmData pwmData;//This is set in hardwareModule.cpp
 
 void storeSensorData (Socket &imuSocket)
 {
@@ -29,7 +27,7 @@ void storeSensorData (Socket &imuSocket)
 	{		
 		if	(imuSocket.receive((void *)&sensorData,sizeof(sensorData))!=0) 
 		{
-		//	printf("Roll %lf, Roll Rate %lf, Yaw %lf Position %lf\n",test.imuData.orientationX,test.imuData.rollRate,test.imuData.yawRate,test.dvlData.positionX);
+			//	printf("Roll %lf, Roll Rate %lf, Yaw %lf Position %lf\n",test.imuData.orientationX,test.imuData.rollRate,test.imuData.yawRate,test.dvlData.positionX);
 		}
 		else break;
 	}
@@ -54,12 +52,11 @@ void handleSetPoint(Socket &setPointSocket)
 
 void sendPwmData(Socket &pwmSocket)
 {
-	PwmData test;
 	int flag;
 	while (true)
 	{
-		flag=pwmSocket.send((void *)&test,sizeof(test)) ;
-		if (sizeof(test) == flag)
+		flag=pwmSocket.send((void *)&pressureData,sizeof(pressureData));
+		if (sizeof(pwmData) == flag)
 		{	
 			//printf("SendingPwmDatai\n");
 			usleep(100000);
@@ -71,28 +68,56 @@ void sendPwmData(Socket &pwmSocket)
 void sendPressureData(Socket &pressureSocket)
 {
 	pressureData.height=100;
+	int flag;
+	while (true)
+	{
+		flag=pressureSocket.send((void *)&pressureData,sizeof(pressureData));
+		if (sizeof(pressureData) == flag)
+		{
+			//printf("Sending Pressure Data\n");
+			usleep(100000);
+		}
+		else if (flag == 0)break;
+	}
+
 }
 
 
 void sendDebugData(Socket &debugSocket)
 {
+	DebugData debugData;
+	debugData.thrusterBattery=14.0;
+	debugData.elecBattery=15.0;
+	int flag;
+	while (true)
+	{
+		flag=debugSocket.send((void *)&debugData,sizeof(debugData));
+		if (sizeof(debugData) == flag)
+		{
+			//printf("Sending Debug Data\n");
+			usleep(100000);
+		}
+		else if (flag == 0)break;
+	}
+
+
 }
 void storeParam(Socket &paramSocket)
 {
 	ControlParam controlParam;
 	while (true)
-    {
+	{
 		int flag;
-        flag=paramSocket.receive((void *)&controlParam,sizeof(controlParam)) ;
-        if (sizeof(controlParam) == flag)
-        {
+		flag=paramSocket.receive((void *)&controlParam,sizeof(controlParam)) ;
+		if (sizeof(controlParam) == flag)
+		{
 			printf("got Param\n");
 			controller.updateParam(controlParam);
-        }
-        else if (flag == 0)break;
-    }
+		}
+		else if (flag == 0)break;
+	}
 
-	
+
 }
 void * socketHandler(void * i)
 {
@@ -102,7 +127,7 @@ void * socketHandler(void * i)
 	int portNo;
 	currentPort=*(port *)i;
 	portNo=currentPort.portno;
-		sprintf(buf,"%d",portNo);
+	sprintf(buf,"%d",portNo);
 	int currentThread=currentPort.identifier;
 	printf("Started the thread with identifier %d \n", currentThread);	
 	child[currentThread].setPort(buf,"127.0.0.1" );
@@ -115,7 +140,7 @@ void * socketHandler(void * i)
 	{
 		handleSetPoint(child[currentThread]);
 	}
-		
+
 	else if (currentThread == PWM_DATA)
 	{
 		sendPwmData(child[currentThread]);
