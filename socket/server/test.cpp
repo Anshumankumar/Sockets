@@ -55,7 +55,7 @@ void sendPwmData(Socket &pwmSocket)
 	int flag;
 	while (true)
 	{
-		flag=pwmSocket.send((void *)&pressureData,sizeof(pressureData));
+		flag=pwmSocket.send((void *)&pwmData,sizeof(pwmData));
 		if (sizeof(pwmData) == flag)
 		{	
 			//printf("SendingPwmDatai\n");
@@ -151,7 +151,7 @@ void * socketHandler(void * i)
 	}
 	else if (currentThread == DEBUG_RECEIVE)
 	{
-		sendPwmData(child[currentThread]);
+		sendDebugData(child[currentThread]);
 	}
 	else if (currentThread == PRESSURE_DATA)
 	{
