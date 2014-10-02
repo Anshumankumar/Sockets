@@ -163,31 +163,74 @@ void * socketHandler(void * i)
 
 int main()
 {
-
+	//TODO Update GETENV
 	printf("Starting the Socket\n");
 	port curPort[MAX_THREAD];
 	int flag;
 	int threadCount=0;
 	pthread_t thread_id[MAX_THREAD];
 	int iret[MAX_THREAD];
+	void* res;
 	Socket parent("4950","127.0.0.1",SOCK_DGRAM);
-
+	for (int i =0;i<MAX_THREAD;i++)
+	{
+		iret[i]=-1;
+		curPort[i].identifier=-1;
+	}
 	if ((flag=parent.initialize()) == 0)
 	{
 		printf("Parent is ready\n");
 
 		while(true)
 		{
-			threadCount++;
 			parent.receive_dgram(new_port);
+			for (int i=0;i<MAX_THREAD;i++)
+			{
+				if (new_port.identifier==curPort[i].identifier)
+				{
+					threadCount=i;
+				}
+			}
 			curPort[threadCount].identifier=new_port.identifier;
 			curPort[threadCount].portno=new_port.portno;
 			printf("The Data Identifier is %d\n",new_port.identifier);
 			printf("The port no is %d\n",new_port.portno);
-			if( (iret[curPort[threadCount].identifier]=pthread_create( &thread_id[curPort[threadCount].identifier], NULL, &socketHandler, (void *)&curPort[threadCount])) ) 
+			if (iret[curPort[threadCount].identifier]!=-1) //This is done to make thread more reliable.If the client dies in SBC it can handle them correctly.
+			{
+				int s;
+				s = pthread_cancel(thread_id[curPort[threadCount].identifier]);
+				if (s != 0)
+				{
+					errno=s;
+					perror("pthread_cancel");
+				}
+				s = pthread_join(thread_id[curPort[threadCount].identifier], &res);
+				if (s != 0)
+				{
+					errno=s;
+					perror("pthread_join");
+				}
+
+				if (res == PTHREAD_CANCELED)
+				{
+					printf("*********\n %d Thread was canceled\n**********\n",
+							curPort[threadCount].identifier);
+				}
+				else
+				{
+					printf("thread wasn't canceled (shouldn't happen!)\n");
+				}
+			}
+			if( (iret[curPort[threadCount].identifier]=pthread_create(
+							&thread_id[curPort[threadCount].identifier], NULL, 
+							&socketHandler, (void *)&curPort[threadCount]))) 
 			{
 				printf("Thread creation failed: %d\n", iret[new_port.identifier]);
 			} 
+			else 
+			{
+				threadCount++;
+			}
 		}
 	}
 	else printf("FATAL_ERROR parent not intialize");

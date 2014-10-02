@@ -132,7 +132,7 @@ void Controller::motionController()
 	if(controllerMetaData.yawErrorSum > 50)
     {
         controllerMetaData.yawErrorSum = 50;
-    }
+   }
 
     if(controllerMetaData.yawErrorSum < -50)
     {

@@ -30,7 +30,7 @@ int main( int argc, char *argv[], char *env[] )
     if( (pid2 = fork()) == 0 )
     {
         printf( "Child pid = %d\n", getpid() );
-        printf( "Child: sending parent SIGUSR1\n", getpid() ); kill( pid1, SIGUSR1 );
+        printf( "Child: sending parent SIGUSR1%d\n", getpid() ); kill( pid2, SIGUSR1 );
    
         for( ;; ); /* loop forever */
 
